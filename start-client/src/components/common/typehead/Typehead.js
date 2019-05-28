@@ -113,12 +113,35 @@ class Typehead extends React.Component {
     }
   }
 
+  isValid = dependency => {
+    return dependency.versionRange
+      ? CompareVersion(this.props.boot, dependency.versionRange)
+      : true
+  }
+
+  sort = dependencies => {
+    return dependencies.sort((a, b) => {
+      if (this.isValid(a) && !this.isValid(b)) {
+        return -1
+      }
+      if (!this.isValid(a) && this.isValid(b)) {
+        return 1
+      }
+      return 0
+    })
+  }
+
   render() {
     let dependencies = []
     if (this.state.search) {
       dependencies = this.search
         .search(this.state.search)
         .filter(item => !this.props.exclude.find(o => o.name === item.name))
+
+      if (dependencies && dependencies.length > 5) {
+        dependencies = dependencies.slice(0, 5)
+      }
+      dependencies = this.sort(dependencies)
     }
     return (
       <>
@@ -158,6 +181,7 @@ Typehead.propTypes = {
       name: PropTypes.string.isRequired,
       group: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
+      versionRange: PropTypes.string,
       versionRequirement: PropTypes.string,
     })
   ),
@@ -167,6 +191,7 @@ Typehead.propTypes = {
       name: PropTypes.string.isRequired,
       group: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
+      versionRange: PropTypes.string,
       versionRequirement: PropTypes.string,
     })
   ),

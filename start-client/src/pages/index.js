@@ -253,7 +253,17 @@ class IndexPage extends React.Component {
         <GlobalHotKeys keyMap={this.keyMap} handlers={this.handlers} />
         <Meta />
         <ToastContainer position='top-center' hideProgressBar />
-        <form onSubmit={this.onSubmit}>
+        <form onSubmit={this.onSubmit} autocomplete='off'>
+          <input
+            style={{ display: 'none' }}
+            type='text'
+            name='fakeusernameremembered'
+          />
+          <input
+            style={{ display: 'none' }}
+            type='password'
+            name='fakepasswordremembered'
+          />
           <div className='colset'>
             <div className='left'>Project</div>
             <div className='right'>

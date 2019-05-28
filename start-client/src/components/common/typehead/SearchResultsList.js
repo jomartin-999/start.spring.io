@@ -17,44 +17,25 @@ class SearchResultsList extends React.Component {
     this.props.onSelectedChanged(-1)
   }
 
-  isValid(dependency) {
-    return dependency.versionRange
-      ? CompareVersion(this.props.boot, dependency.versionRange)
-      : true
-  }
-
-  sortDependenciesByValidThenInvalid(dependencies) {
-    dependencies.sort((a, b) => {
-      if (this.isValid(a) && !this.isValid(b)) {
-        return -1
-      }
-      if (!this.isValid(a) && this.isValid(b)) {
-        return 1
-      }
-      return 0
-    })
-  }
-
   render() {
     let dependencies = this.props.dependencies
-    if (dependencies.length > 5) {
-      dependencies = dependencies.slice(0, 5)
-    }
-
-    this.sortDependenciesByValidThenInvalid(dependencies)
-
     return (
       <div className='dependencies-list'>
         {dependencies.map((dependency, index) => {
-          const valid = this.isValid(dependency)
+          const valid = dependency.versionRange
+            ? CompareVersion(this.props.boot, dependency.versionRange)
+            : true
           return (
-            <div
+            <a
+              href='/'
               className={`dependency-item dependency-item-gray ${
                 !valid ? 'invalid' : ''
               }  ${this.props.selected === index ? 'selected' : ''}`}
               key={`item${dependency.id}`}
               selected={this.props.selected === index}
-              onClick={() => {
+              disabled={!valid}
+              onClick={e => {
+                e.preventDefault()
                 if (valid) {
                   this.onClick(dependency)
                 }
@@ -87,7 +68,7 @@ class SearchResultsList extends React.Component {
                   </span>
                 )}
               </div>
-            </div>
+            </a>
           )
         })}
       </div>

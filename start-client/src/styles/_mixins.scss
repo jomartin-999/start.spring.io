@@ -125,9 +125,11 @@
       opacity: 1;
     }
   }
-  &.invalid {
+  &.invalid,
+  &.checked.invalid {
     opacity: 0.6;
     cursor: not-allowed;
+    background: $spring-gray-color;
     &:hover {
       background: $spring-gray-color;
     }
