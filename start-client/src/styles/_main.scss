@@ -717,3 +717,20 @@ $gw: 200px;
     }
   }
 }
+
+.loading-page {
+  .text {
+    position: absolute;
+    left: 340px;
+    top: 25px;
+    padding-left: 44px;
+    padding-top: 4px;
+    color: rgba(0, 0, 0, 0.4);
+    svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      color: $spring-primary-color;
+    }
+  }
+}

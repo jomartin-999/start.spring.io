@@ -36,13 +36,6 @@ const plugins = [
       ],
     },
   },
-  {
-    resolve: `gatsby-source-filesystem`,
-    options: {
-      name: `json`,
-      path: `${__dirname}/content/`,
-    },
-  },
   `gatsby-transformer-json`,
   `gatsby-plugin-sass`,
   `gatsby-transformer-sharp`,

@@ -6,10 +6,9 @@ import querystring from 'querystring'
 import set from 'lodash.set'
 import { GlobalHotKeys } from 'react-hotkeys'
 import { ToastContainer, toast } from 'react-toastify'
-import { graphql } from 'gatsby'
 
 import { CheckboxList } from '../components/common/checkbox-list'
-import { Footer, Layout } from '../components/common/layout'
+import { Footer, Layout, Header, Loader } from '../components/common/layout'
 import {
   IconChevronRight,
   IconList,
@@ -20,21 +19,62 @@ import { Meta } from '../components/common/meta'
 import { Typehead } from '../components/common/typehead'
 
 class IndexPage extends React.Component {
-  constructor(props) {
-    super(props)
-    const data = this.props.data.allContentJson.edges[0].node
-    let values = { ...data.default }
-    set(values, 'meta.name', get(data, 'default.meta.artifact'))
-    set(
-      values,
-      'meta.packageName',
-      `${get(data, 'default.meta.group')}.${get(data, 'default.meta.artifact')}`
-    )
-    this.state = {
-      dependencies: [],
-      tab: 'quick-search',
-      more: false,
-      ...values,
+  onComplete = json => {
+    const values = {
+      project: get(json, 'type.default'),
+      language: get(json, 'language.default'),
+      boot: get(json, 'bootVersion.default'),
+      meta: {
+        name: get(json, 'name.default'),
+        group: get(json, 'groupId.default'),
+        artifact: get(json, 'artifactId.default'),
+        description: get(json, 'description.default'),
+        packaging: get(json, 'packaging.default'),
+        packageName: get(json, 'packageName.default'),
+        java: get(json, 'javaVersion.default'),
+      },
+    }
+
+    const deps = []
+    get(json, 'dependencies.values', []).forEach(group => {
+      deps.push(
+        ...group.values.map(item => ({
+          id: `${get(item, 'id', '')}`,
+          name: `${get(item, 'name', '')}`,
+          group: `${group.name}`,
+          weight: 0,
+          description: `${get(item, 'description', '')}`,
+          versionRange: `${get(item, 'versionRange', '')}`,
+          versionRequirement: `${get(item, 'versionRange', '')}`,
+        }))
+      )
+    })
+    this.lists = {
+      project: get(json, 'type.values', [])
+        .filter(type => type.action === '/starter.zip')
+        .map(type => ({
+          key: `${type.id}`,
+          text: `${type.name}`,
+        })),
+      language: get(json, 'language.values', []).map(language => ({
+        key: `${language.id}`,
+        text: `${language.name}`,
+      })),
+      boot: get(json, 'bootVersion.values', []).map(boot => ({
+        key: `${boot.id}`,
+        text: `${boot.name}`,
+      })),
+      meta: {
+        java: get(json, 'javaVersion.values', []).map(java => ({
+          key: `${java.id}`,
+          text: `${java.name}`,
+        })),
+        packaging: get(json, 'packaging.values', []).map(packaging => ({
+          key: `${packaging.id}`,
+          text: `${packaging.name}`,
+        })),
+      },
+      dependencies: deps,
     }
     this.keyMap = {
       SUBMIT: ['command+enter', 'ctrl+enter'],
@@ -46,10 +86,10 @@ class IndexPage extends React.Component {
       },
     }
     // Parsing parameters URL (search or hash)
-    if (props.location.search || props.location.hash) {
-      let queryParams = queryString.parse(props.location.search)
-      if (props.location.hash) {
-        let hash = props.location.hash.substr(2)
+    if (this.props.location.search || this.props.location.hash) {
+      let queryParams = queryString.parse(this.props.location.search)
+      if (this.props.location.hash) {
+        let hash = this.props.location.hash.substr(2)
         queryParams = queryString.parse(`?${hash}`)
       }
       const params = {
@@ -64,6 +104,7 @@ class IndexPage extends React.Component {
         description: 'meta.description',
         packageName: 'meta.packageName',
       }
+
       Object.keys(queryParams).forEach(entry => {
         const key = get(params, entry)
         const value = get(queryParams, entry).toLowerCase()
@@ -74,7 +115,7 @@ class IndexPage extends React.Component {
             case 'boot':
             case 'meta.packaging':
             case 'meta.java':
-              const vals = get(data, key, [])
+              const vals = get(this.lists, key, [])
               if (vals.find(a => a.key === value)) {
                 set(this.state, key, value)
               }
@@ -85,9 +126,23 @@ class IndexPage extends React.Component {
         }
       })
     }
+
+    this.setState({
+      complete: true,
+      dependencies: [],
+      tab: 'quick-search',
+      more: false,
+      ...values,
+    })
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    fetch('http://localhost:8000/api.json')
+      .then(response => response.json())
+      .then(data => {
+        this.onComplete(data)
+      })
+  }
 
   dependencyAdd = dependency => {
     this.setState({ dependencies: [...this.state.dependencies, dependency] })
@@ -182,7 +237,17 @@ class IndexPage extends React.Component {
   }
 
   render() {
-    const data = this.props.data.allContentJson.edges[0].node
+    if (!get(this.state, 'complete')) {
+      return (
+        <div className='loading-page'>
+          <Header />
+          <div className='text'>
+            <Loader />
+            loading ...
+          </div>
+        </div>
+      )
+    }
     return (
       <Layout>
         <GlobalHotKeys keyMap={this.keyMap} handlers={this.handlers} />
@@ -195,7 +260,7 @@ class IndexPage extends React.Component {
               <RadioGroup
                 name='project'
                 selected={this.state.project}
-                options={data.project}
+                options={this.lists.project}
                 onChange={value => {
                   this.setState({ project: value })
                 }}
@@ -211,7 +276,7 @@ class IndexPage extends React.Component {
                 onChange={value => {
                   this.setState({ language: value })
                 }}
-                options={data.language}
+                options={this.lists.language}
               />
             </div>
           </div>
@@ -221,7 +286,7 @@ class IndexPage extends React.Component {
               <RadioGroup
                 name='boot'
                 selected={this.state.boot}
-                options={data.boot}
+                options={this.lists.boot}
                 onChange={value => {
                   this.setState({ boot: value })
                 }}
@@ -315,7 +380,7 @@ class IndexPage extends React.Component {
                         name='packaging'
                         disabled={!this.state.more}
                         selected={this.state.meta.packaging}
-                        options={data.meta.packaging}
+                        options={this.lists.meta.packaging}
                         onChange={value => {
                           this.updateMetaState('packaging', value)
                         }}
@@ -329,7 +394,7 @@ class IndexPage extends React.Component {
                         name='java'
                         disabled={!this.state.more}
                         selected={this.state.meta.java}
-                        options={data.meta.java}
+                        options={this.lists.meta.java}
                         onChange={value => {
                           this.updateMetaState('java', value)
                         }}
@@ -390,7 +455,7 @@ class IndexPage extends React.Component {
                       boot={this.state.boot}
                       add={this.dependencyAdd}
                       submit={this.onSubmit}
-                      options={data.dependencies}
+                      options={this.lists.dependencies}
                       exclude={this.state.dependencies}
                     />
                   </div>
@@ -412,7 +477,7 @@ class IndexPage extends React.Component {
                   boot={this.state.boot}
                   add={this.dependencyAdd}
                   remove={this.dependencyRemove}
-                  list={data.dependencies}
+                  list={this.lists.dependencies}
                   checked={this.state.dependencies}
                 />
               )}
@@ -442,77 +507,5 @@ class IndexPage extends React.Component {
     )
   }
 }
-
-export const jsonObject = graphql`
-  query {
-    site: allSite {
-      edges {
-        node {
-          id
-          siteMetadata {
-            title
-            description
-            twitter
-            canonical
-            author
-            image
-            apiUrl
-          }
-        }
-      }
-    }
-    allContentJson {
-      edges {
-        node {
-          id
-          project {
-            key
-            text
-          }
-          language {
-            key
-            text
-          }
-          boot {
-            key
-            text
-          }
-          meta {
-            packaging {
-              key
-              text
-            }
-            java {
-              key
-              text
-            }
-          }
-          default {
-            project
-            language
-            boot
-            meta {
-              group
-              artifact
-              description
-              packaging
-              java
-            }
-          }
-          dependencies {
-            id
-            name
-            group
-            weight
-            description
-            versionRequirement
-            versionRange
-            keywords
-          }
-        }
-      }
-    }
-  }
-`
 
 export default IndexPage
