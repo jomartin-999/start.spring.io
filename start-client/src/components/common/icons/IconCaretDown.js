@@ -1,11 +1,14 @@
 import React from 'react'
 
-const IconCaretDown = ({ className }) => (
+const IconCaretDown = () => (
   <svg
     aria-hidden='true'
     focusable='false'
+    data-icon='caret-down'
+    role='img'
+    xmlns='http://www.w3.org/2000/svg'
     viewBox='0 0 320 512'
-    className={className}
+    className='icon-caret-down'
   >
     <path
       fill='currentColor'

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const IconGithub = ({ className }) => (
+const IconGithub = () => (
   <svg
     aria-hidden='true'
     focusable='false'
@@ -8,7 +8,7 @@ const IconGithub = ({ className }) => (
     role='img'
     xmlns='http://www.w3.org/2000/svg'
     viewBox='0 0 496 512'
-    className={className}
+    className='icon-github'
   >
     <path
       fill='currentColor'

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 
 import CompareVersion from '../../utils/version-compare'
-import { IconPlus, IconTimes } from '../icons'
+import { IconPlus } from '../icons'
 
 class SearchResultsList extends React.Component {
   onClick = dependency => {

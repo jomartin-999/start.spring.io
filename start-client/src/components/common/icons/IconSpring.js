@@ -1,7 +1,15 @@
 import React from 'react'
 
-const IconSpring = ({ className }) => (
-  <svg className={className} viewBox='0 0 248.7 248.38'>
+const IconSpring = () => (
+  <svg
+    aria-hidden='true'
+    focusable='false'
+    data-icon='spring'
+    role='img'
+    xmlns='http://www.w3.org/2000/svg'
+    className='icon-spring'
+    viewBox='0 0 248.7 248.38'
+  >
     <title>Spring</title>
     <g id='Layer_2'>
       <g id='Layer_1-2'>
