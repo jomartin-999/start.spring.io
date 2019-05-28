@@ -102,9 +102,13 @@ class Typehead extends React.Component {
   showWarningForSearchReturn = dependencies => {
     if (dependencies.length > 5) {
       return (
-        <label className='searchWarning'>
-          More than 5 results found. Refine your search if necessary.
-        </label>
+        <div className='search-more-warning'>
+          <p>
+            More than 5 results found.
+            <br />
+            Refine your search if necessary.
+          </p>
+        </div>
       )
     }
   }

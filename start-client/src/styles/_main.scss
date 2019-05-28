@@ -366,67 +366,12 @@ label {
 
 .dependencies-list {
   .dependency-item {
-    position: relative;
-    border: 2px solid lighten($spring-border-color, 4);
-    background: #daeccf;
-    line-height: 24px;
-    padding: 8px 40px 8px 16px;
-    margin: 8px 0;
-    border-radius: $spring-radius;
-    cursor: pointer;
-    svg {
-      position: absolute;
-      top: 50%;
-      right: 15px;
-      margin-top: -7px;
-      display: none;
-      height: 16px;
-    }
-    .title {
-      font-weight: bold;
-      span {
-        background: rgba($spring-color, 0.4);
-        color: white;
-        border-radius: $spring-radius;
-        text-transform: uppercase;
-        font-size: 13px;
-        padding: 1px $spring-8points/2;
-      }
-    }
-    .description {
-      color: rgba(0, 0, 0, 0.6);
-    }
-    .warning {
-      font-weight: bold;
-      color: #f30808;
-    }
-    &:hover {
-      border-color: $spring-border-color;
-      svg {
-        display: block;
-      }
-    }
+    @include tile();
+    margin: $spring-8points / 2 0;
   }
-  .dependency-item-gray {
-    background: white;
-    border: 2px solid #f7f7f7;
-    &:hover svg {
-      display: none;
-    }
-    &.selected {
-      background: #e7f1f4;
-      border-color: #e7f1f4;
-      svg {
-        display: block;
-      }
-    }
-    &.invalid {
-      background: #ffe2e2;
-      border-color: #ffe2e2;
-      cursor: not-allowed;
-      svg {
-        display: none;
-      }
+  &.dependencies-list-checked {
+    .dependency-item {
+      margin: $spring-8points * 2 0;
     }
   }
 }
@@ -500,106 +445,8 @@ $gw: 200px;
     position: relative;
     padding-bottom: 12px;
     a {
-      position: relative;
-      display: block;
-      text-decoration: none;
-      padding: $spring-8points * 2;
-      padding-right: 60px;
-      color: rgba($spring-color, 0.8);
-      background: $spring-gray-color;
-      cursor: pointer;
-      font-size: $spring-font-size-sm;
-      display: flex;
-      align-items: center;
-      margin-bottom: 2px;
-      @include outline();
-      strong {
-        color: $spring-color;
-      }
-      input {
-        display: none;
-      }
-      div {
-        padding: 0;
-        margin: 0;
-      }
-      span {
-        font-size: $spring-font-size-sm - 1;
-      }
-      .icon {
-        $s: 24px;
-        position: absolute;
-        display: block;
-        border: 2px solid $spring-border-color;
-        height: $s;
-        width: $s;
-        margin-top: -$s/2;
-        top: 50%;
-        right: 16px;
-        border-radius: $s/2 + 2;
-        color: $spring-color;
-      }
-      .icon-times,
-      .icon-check,
-      .icon-plus {
-        display: block;
-        opacity: 0;
-        width: 12px;
-        margin: 0 auto;
-        position: absolute;
-        top: 5px;
-        left: 6px;
-      }
-      .icon-times {
-        left: 7px;
-        width: 10px;
-        color: #d20000;
-      }
-      .icon-check {
-        top: 6px;
-      }
-    }
-    a:hover {
-      background: #e7f1f4;
-      .icon {
-        border-color: rgba(darken(#e7f1f4, 20), 0.6);
-        color: darken(#e7f1f4, 60);
-      }
-      .icon-plus {
-        opacity: 1;
-      }
-    }
-    a.checked {
-      background: white;
-      box-shadow: 0 2px 3px 1px rgba(0, 0, 0, 0.1);
-      .icon {
-        border-color: rgba(0, 0, 0, 0.1);
-        color: $spring-primary-color;
-      }
-      .icon-check {
-        opacity: 1;
-      }
-    }
-    a.checked:hover {
-      .icon-plus {
-        opacity: 0;
-      }
-      .icon-check {
-        opacity: 0;
-      }
-      .icon-times {
-        opacity: 1;
-      }
-    }
-    a.invalid {
-      opacity: 0.6;
-      cursor: not-allowed;
-      &:hover {
-        background: $spring-gray-color;
-      }
-      .warning {
-        color: #f30808;
-      }
+      @include tile();
+      @include tilehover();
     }
     .group-title {
       border-bottom: 1px solid $spring-border-color;
@@ -652,10 +499,19 @@ $gw: 200px;
   padding-bottom: 8px;
 }
 
-.searchWarning {
-  font-weight: bold;
-  font-style: italic;
-  padding-left: 8px;
+.search-no-selected {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.search-more-warning {
+  padding: $spring-8points 0 $spring-8points * 2;
+  color: rgba(0, 0, 0, 0.5);
+  p {
+    padding: 0;
+    margin: 0;
+    line-height: 24px;
+    padding-left: 16px;
+  }
 }
 
 .sticky-label {

@@ -2,40 +2,53 @@ import PropTypes from 'prop-types'
 import React from 'react'
 
 import CompareVersion from './../../utils/version-compare'
-import { IconTimes } from './../icons'
+import { IconCheck, IconTimes } from './../icons'
 
 class List extends React.Component {
-  onClick = dependency => {
+  onClick = (dependency, event) => {
+    event.preventDefault()
     this.props.remove(dependency)
+    return false
   }
 
   render() {
     let dependencies = this.props.list
     return (
-      <div className='dependencies-list'>
+      <div className='dependencies-list dependencies-list-checked'>
         {dependencies.map(dependency => {
           const compatibility = dependency.versionRange
             ? CompareVersion(this.props.boot, dependency.versionRange)
             : true
           return (
-            <div
-              className='dependency-item'
-              onClick={() => {
-                this.onClick(dependency)
+            <a
+              className='dependency-item checked'
+              href='/'
+              onClick={event => {
+                this.onClick(dependency, event)
               }}
               key={dependency.id}
             >
-              <div className='title'>
-                {dependency.name} <span>{dependency.group}</span>
+              <div key={`d1${dependency.id}`}>
+                <strong key={`d2${dependency.id}`}>
+                  {dependency.name} <span>{dependency.group}</span>
+                </strong>
+                <br key={`d3${dependency.id}`} />
+                <span key={`d4${dependency.id}`} className='description'>
+                  {dependency.description}
+                </span>
+                {compatibility && (
+                  <span key={`d5${dependency.id}`} className='icon'>
+                    <IconTimes key={`d6${dependency.id}`} />
+                    <IconCheck key={`d7${dependency.id}`} />
+                  </span>
+                )}
+                {!compatibility && (
+                  <span className='warning' key={`warning${dependency.id}`}>
+                    Requires Spring Boot {dependency.versionRequirement}.
+                  </span>
+                )}
               </div>
-              <div className='description'>{dependency.description}</div>
-              <IconTimes />
-              {!compatibility && (
-                <div className='warning' key={`warning${dependency.id}`}>
-                  Requires Spring Boot {dependency.versionRequirement}.
-                </div>
-              )}
-            </div>
+            </a>
           )
         })}
       </div>

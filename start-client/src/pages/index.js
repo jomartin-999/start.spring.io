@@ -8,7 +8,7 @@ import { GlobalHotKeys } from 'react-hotkeys'
 import { ToastContainer, toast } from 'react-toastify'
 
 import { CheckboxList } from '../components/common/checkbox-list'
-import { Footer, Layout, Header, Loader } from '../components/common/layout'
+import { Footer, Header, Layout, Loader } from '../components/common/layout'
 import {
   IconChevronRight,
   IconList,
@@ -460,15 +460,19 @@ class IndexPage extends React.Component {
                     />
                   </div>
                   <div className='column'>
-                    {this.state.dependencies.length > 0 && (
+                    <label>Selected dependencies</label>
+                    {this.state.dependencies.length > 0 ? (
                       <>
-                        <label>Selected dependencies</label>
                         <List
                           boot={this.state.boot}
                           remove={this.dependencyRemove}
                           list={this.state.dependencies}
                         />
                       </>
+                    ) : (
+                      <div className='search-no-selected'>
+                        No dependency selected
+                      </div>
                     )}
                   </div>
                 </div>

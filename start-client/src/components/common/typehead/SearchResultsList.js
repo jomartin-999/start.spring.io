@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 
 import CompareVersion from '../../utils/version-compare'
-import { IconPlus } from '../icons'
+import { IconPlus, IconTimes } from '../icons'
 
 class SearchResultsList extends React.Component {
   onClick = dependency => {
@@ -66,21 +66,27 @@ class SearchResultsList extends React.Component {
                 this.onMouseLeave(index)
               }}
             >
-              <div className='title' key={`item${dependency.id}`}>
-                {dependency.name} <span>{dependency.group}</span>
+              <div>
+                <strong className='title' key={`item${dependency.id}`}>
+                  {dependency.name}
+                </strong>
+                <br />
+                {valid && (
+                  <span key={`d1${dependency.id}`}>
+                    <span className='description' key={`d2${dependency.id}`}>
+                      {dependency.description}
+                    </span>
+                    <span key={`d3${dependency.id}`} className='icon'>
+                      <IconPlus key={`d4${dependency.id}`} />
+                    </span>
+                  </span>
+                )}
+                {!valid && (
+                  <span className='warning' key={`warning${dependency.id}`}>
+                    Requires Spring Boot {dependency.versionRequirement}.
+                  </span>
+                )}
               </div>
-              {valid && (
-                <div className='description' key={`description{dependency.id}`}>
-                  {dependency.description}
-                </div>
-              )}
-
-              <IconPlus key={`icon${dependency.id}`} />
-              {!valid && (
-                <div className='warning' key={`warning${dependency.id}`}>
-                  Requires Spring Boot {dependency.versionRequirement}.
-                </div>
-              )}
             </div>
           )
         })}
